@@ -26,25 +26,35 @@ const createCategoryHandler = async (req, res) => {
       );
       const categoryData = await getData.json();
 
-      console.log('^^^^^^^');
-      console.log(categoryData.itemMetadata[1].id.id);
-      console.log('^^^^^^^');
+      //   console.log(categoryData.itemMetadata[1].id);
+      //   console.log('^^^^^^^');
 
-      for(var j=0;j<categoryData.itemMetadata.length;j++)
-      {
+      for (let j = 0; j < categoryData.itemMetadata.length; j++) {
         category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j].id);
+
+        let itemData = await fetch(
+          `https://backend-evaluation-lgsvu.ondigitalocean.app/items/${categoryData.itemMetadata[j].id}`,
+
+        );
+        itemData = await itemData.json();
+        console.log('^^^^^^^');
+        console.log(itemData.features);
+        console.log('^^^^^^^');
+
+        for (let k = 0; k < itemData.features.length; k++) {
+          item = await categoryServices.createItem(categoryData.itemMetadata[j].id, 'a', 'a', itemData.features[k].name, itemData.features[k].value);
+        }
+        // item = await categoryServices.createItem(categoryData.itemMetadata[j].id,"a","a",itemData.features.name,itemData.features.value)
       }
 
-     
+      //   for (let j = 0; j < categoryData.itemMetadata.length; j++) {
+      //     category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j]);
+      //     const getItem = await fetch(`https://backend-evaluation-lgsvu.ondigitalocean.app/items/${categoryData.itemMetadata[i]}`);
+      //     const itemData = await getItem.json(categoryData.itemMetadata[i], 'a', 'a', 'a', 'a');
 
-    //   for (let j = 0; j < categoryData.itemMetadata.length; j++) {
-    //     category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j]);
-    //     const getItem = await fetch(`https://backend-evaluation-lgsvu.ondigitalocean.app/items/${categoryData.itemMetadata[i]}`);
-    //     const itemData = await getItem.json(categoryData.itemMetadata[i], 'a', 'a', 'a', 'a');
+      //     item = await categoryServices.createItem();
 
-    //     item = await categoryServices.createItem();
-
-    //   }
+      //   }
     }
 
     res.status(200).send(category);
