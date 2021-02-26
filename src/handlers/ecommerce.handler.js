@@ -10,23 +10,19 @@ const categoryServices = require('../services/ecommerce.services');
 const createCategoryHandler = async (req, res) => {
   const { query } = req;
 
-  console.log(query.name);
+
 
   const names = JSON.parse(query.name);
   let item;
   let category;
   for (let i = 0; i < names.length; i++) {
-    console.log('*****');
-    console.log(names[i]);
-
-    console.log('*****');
+   
     const getData = await fetch(
       `https://backend-evaluation-lgsvu.ondigitalocean.app/category?name=${names[i]}`,
     );
     const categoryData = await getData.json();
 
-    //   console.log(categoryData.itemMetadata[1].id);
-    //   console.log('^^^^^^^');
+  
 
     for (let j = 0; j < categoryData.itemMetadata.length; j++) {
       category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j].id);
@@ -36,9 +32,7 @@ const createCategoryHandler = async (req, res) => {
 
       );
       itemData = await itemData.json();
-      console.log('^^^^^^^');
-      console.log(itemData.features);
-      console.log('^^^^^^^');
+      
 
       for (let k = 0; k < itemData.features.length; k++) {
         item = await categoryServices.createItem(categoryData.itemMetadata[j].id, 'a', 'a', itemData.features[k].name, itemData.features[k].value);

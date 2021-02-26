@@ -13,12 +13,7 @@ const getFeatures = async (featureName) => {
     where: { featureName: feature },
   });
 
-  // console.log(features[0].dataValues.itemid);
-
   const uniqueItemId = [...new Set(features.map((item) => item.itemid))];
-
-  // console.log(uniqueItemId);
-  // console.log(uniqueItemId);
 
   const Obj = {
     color: [],
