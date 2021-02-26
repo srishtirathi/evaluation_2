@@ -8,59 +8,44 @@ const categoryServices = require('../services/ecommerce.services');
 // };
 
 const createCategoryHandler = async (req, res) => {
-  try {
-    const { query } = req;
+  const { query } = req;
 
-    console.log(query.name);
+  console.log(query.name);
 
-    const names = JSON.parse(query.name);
-    let item;
-    let category;
-    for (let i = 0; i < names.length; i++) {
-      console.log('*****');
-      console.log(names[i]);
+  const names = JSON.parse(query.name);
+  let item;
+  let category;
+  for (let i = 0; i < names.length; i++) {
+    console.log('*****');
+    console.log(names[i]);
 
-      console.log('*****');
-      const getData = await fetch(
-        `https://backend-evaluation-lgsvu.ondigitalocean.app/category?name=${names[i]}`,
+    console.log('*****');
+    const getData = await fetch(
+      `https://backend-evaluation-lgsvu.ondigitalocean.app/category?name=${names[i]}`,
+    );
+    const categoryData = await getData.json();
+
+    //   console.log(categoryData.itemMetadata[1].id);
+    //   console.log('^^^^^^^');
+
+    for (let j = 0; j < categoryData.itemMetadata.length; j++) {
+      category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j].id);
+
+      let itemData = await fetch(
+        `https://backend-evaluation-lgsvu.ondigitalocean.app/items/${categoryData.itemMetadata[j].id}`,
+
       );
-      const categoryData = await getData.json();
+      itemData = await itemData.json();
+      console.log('^^^^^^^');
+      console.log(itemData.features);
+      console.log('^^^^^^^');
 
-      //   console.log(categoryData.itemMetadata[1].id);
-      //   console.log('^^^^^^^');
-
-      for (let j = 0; j < categoryData.itemMetadata.length; j++) {
-        category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j].id);
-
-        let itemData = await fetch(
-          `https://backend-evaluation-lgsvu.ondigitalocean.app/items/${categoryData.itemMetadata[j].id}`,
-
-        );
-        itemData = await itemData.json();
-        console.log('^^^^^^^');
-        console.log(itemData.features);
-        console.log('^^^^^^^');
-
-        for (let k = 0; k < itemData.features.length; k++) {
-          item = await categoryServices.createItem(categoryData.itemMetadata[j].id, 'a', 'a', itemData.features[k].name, itemData.features[k].value);
-        }
-        // item = await categoryServices.createItem(categoryData.itemMetadata[j].id,"a","a",itemData.features.name,itemData.features.value)
+      for (let k = 0; k < itemData.features.length; k++) {
+        item = await categoryServices.createItem(categoryData.itemMetadata[j].id, 'a', 'a', itemData.features[k].name, itemData.features[k].value);
       }
-
-      //   for (let j = 0; j < categoryData.itemMetadata.length; j++) {
-      //     category = await categoryServices.createCategory(categoryData.name, categoryData.description, categoryData.itemMetadata[j]);
-      //     const getItem = await fetch(`https://backend-evaluation-lgsvu.ondigitalocean.app/items/${categoryData.itemMetadata[i]}`);
-      //     const itemData = await getItem.json(categoryData.itemMetadata[i], 'a', 'a', 'a', 'a');
-
-      //     item = await categoryServices.createItem();
-
-      //   }
     }
 
     res.status(200).send(category);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send();
   }
 };
 
